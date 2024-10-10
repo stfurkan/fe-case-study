@@ -29,9 +29,11 @@ export default function DashboardMain() {
   const ageFilter = searchParams.get('age') || ''
   const [users, setUsers] = useState<User[]>([])
   const [totalPages, setTotalPages] = useState(1)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const fetchUsers = async () => {
+      setLoading(true)
       const params = new URLSearchParams({
         page: page.toString(),
         ...(ageFilter && { age: ageFilter }),
@@ -42,6 +44,7 @@ export default function DashboardMain() {
       
       setUsers(data.users)
       setTotalPages(data.totalPages)
+      setLoading(false)
     }
 
     fetchUsers()
@@ -56,6 +59,14 @@ export default function DashboardMain() {
     }
     params.set('page', '1')
     router.push(`/dashboard?${params.toString()}`)
+  }
+
+  if (loading) {
+    return (
+      <div className="container mx-auto py-8">
+        <div className="text-center">Loading...</div>
+      </div>
+    )
   }
 
   return (
