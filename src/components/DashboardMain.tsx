@@ -13,6 +13,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import Loading from './Loading'
 
 interface User {
   id: string
@@ -61,14 +62,6 @@ export default function DashboardMain() {
     router.push(`/dashboard?${params.toString()}`)
   }
 
-  if (loading) {
-    return (
-      <div className="container mx-auto py-8">
-        <div className="text-center">Loading...</div>
-      </div>
-    )
-  }
-
   return (
     <div className="container mx-auto py-8">
       <div className="flex justify-between items-center mb-6">
@@ -93,34 +86,45 @@ export default function DashboardMain() {
         />
       </div>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>First Name</TableHead>
-            <TableHead>Last Name</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Age</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {users.map((user) => (
-            <TableRow key={user.id}>
-              <TableCell>{user.firstName}</TableCell>
-              <TableCell>{user.lastName}</TableCell>
-              <TableCell>{user.email}</TableCell>
-              <TableCell>{user.age}</TableCell>
-              <TableCell>
-                <Link href={`/dashboard/${user.id}`}>
-                  <Button variant="outline" size="sm">
-                    View
-                  </Button>
-                </Link>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      {loading
+        ? <Loading />
+        : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>First Name</TableHead>
+                <TableHead>Last Name</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Age</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {users.length > 0 
+                ? users.map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell>{user.firstName}</TableCell>
+                  <TableCell>{user.lastName}</TableCell>
+                  <TableCell>{user.email}</TableCell>
+                  <TableCell>{user.age}</TableCell>
+                  <TableCell>
+                    <Link href={`/dashboard/${user.id}`}>
+                      <Button variant="outline" size="sm">
+                        View
+                      </Button>
+                    </Link>
+                  </TableCell>
+                </TableRow>
+              ))
+              : (
+                <p>
+                  No users found.
+                </p>
+              )}
+            </TableBody>
+          </Table>
+        )
+      }
 
       <div className="flex justify-center space-x-2 mt-4">
         {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
